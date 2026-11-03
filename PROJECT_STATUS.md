@@ -1,7 +1,8 @@
 # CHLOÉ AI – État Global du Projet (PROJECT_STATUS.md)
 
-**Version :** 2.0.0 (Audit & Perfectionnement Validés – Production-Ready)  
-**Propriétaire :** `chloeassistance1@gmail.com`  
+**Version :** 5.0.0 (Édition Finale Validée – Samsung Galaxy S24)  
+**Branche Git de travail :** `fix/chloe-5-complete-audit`  
+**Propriétaire :** `elievideo974@gmail.com`  
 **Plateforme cible :** Samsung Galaxy S24 (Android 14+, One UI 6.1, Chrome Mobile, PWA)  
 **Langue principale :** Français  
 **Taux de succès des tests :** 20/20 (100% Validé)  

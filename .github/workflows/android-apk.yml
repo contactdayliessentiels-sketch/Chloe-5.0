@@ -5,10 +5,13 @@ on:
     branches:
       - main
       - master
+      - 'fix/**'
+      - 'feature/**'
   pull_request:
     branches:
       - main
       - master
+      - 'fix/**'
   workflow_dispatch:
     inputs:
       build_type:
@@ -83,10 +86,15 @@ jobs:
           SDK_DIR="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
           echo "sdk.dir=$SDK_DIR" > android/local.properties
 
-      - name: 11. Compilation Gradle de l'APK (assembleDebug)
+      - name: 11. Compilation Gradle de l'APK
         run: |
           cd android
-          ./gradlew assembleDebug --stacktrace --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+          BUILD_TYPE="${{ inputs.build_type || 'debug' }}"
+          if [ "$BUILD_TYPE" = "release" ]; then
+            ./gradlew assembleRelease --stacktrace --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+          else
+            ./gradlew assembleDebug --stacktrace --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+          fi
 
       - name: Diagnostic Kotlin si la compilation échoue
         if: failure()

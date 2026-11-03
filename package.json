@@ -1,26 +1,38 @@
 {
-  "name": "react-example",
+  "name": "chloe-ai",
   "private": true,
-  "version": "0.0.0",
+  "version": "5.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev": "tsx server.ts",
     "build": "vite build",
+    "start": "node server.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "tsx -e 'import { runAllTests } from \"./server/tests.ts\"; (async () => { const r = await runAllTests(); const p = r.filter(x => x.status === \"passed\").length; console.log(\"TESTS:\", p, \"/\", r.length); if (p !== r.length) process.exit(1); })();'",
+    "cap:sync": "cap sync android",
+    "android:build": "vite build && cap sync android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
     "@google/genai": "^2.4.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
     "@tailwindcss/vite": "^4.3.3",
+    "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
     "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
+    "three": "^0.187.0",
     "vite": "^8.3.0",
-    "express": "^4.21.2",
-    "dotenv": "^17.2.3",
-    "motion": "^12.23.24"
+    "vite-plugin-pwa": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
