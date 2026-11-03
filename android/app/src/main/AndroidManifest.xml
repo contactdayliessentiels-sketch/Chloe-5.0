@@ -25,14 +25,54 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Prise en charge de l'assistance numérique Android (One UI 6.1 / Galaxy S24) -->
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VOICE_COMMAND" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
-        <!-- Foreground Service for Android MediaProjection Screen Sharing -->
+        <!-- Activité d'assistance dédiée (invoquée par appui prolongé sur bouton latéral) -->
+        <activity
+            android:name=".AssistantActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Service de premier plan Android pour la capture d'écran officielle (MediaProjection) -->
         <service
             android:name=".ScreenCaptureService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
+
+        <!-- Service de bulle/fenêtre flottante interactive au-dessus des autres applications -->
+        <service
+            android:name=".FloatingOverlayService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Tuile dans le panneau des réglages rapides Samsung Galaxy S24 -->
+        <service
+            android:name=".ChloeQuickSettingsTile"
+            android:label="CHLOÉ AI"
+            android:icon="@mipmap/ic_launcher_round"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"
