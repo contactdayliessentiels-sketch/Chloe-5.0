@@ -1,0 +1,27 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+*.apk
+
+# Local user data, provider credentials and device-specific Android config.
+data/chloe_store.json
+data/backups/
+data/ai_providers.json
+android/local.properties
+
+# CHLOE AI private runtime data and machine-specific configuration
+data/*.json
+data/backups/*.json
+.env
+.env.*
+!.env.production.example
+.android-sdk/
+android/.gradle/
+.gradle/
+*.zip
+public/assets/aistudio/

@@ -1,0 +1,6 @@
+server/providers.ts              Remplacement complet : stockage chiffré + routage / failover
+src/lib/api-base.ts              Nouveau helper : base URL du backend distant
+.env.production.example          Modèle des variables d'environnement
+patches/apply_patch.py           Modifie proprement les autres fichiers existants
+README_FR.md                     Installation et limites
+VALIDATION_MANUELLE.md           Liste de vérification réelle
