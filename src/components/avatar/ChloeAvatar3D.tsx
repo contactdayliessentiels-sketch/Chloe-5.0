@@ -412,70 +412,18 @@ export const ChloeAvatar3D: React.FC<ChloeAvatar3DProps> = ({
       const currentPreferences = preferencesRef.current;
       const animated = currentPreferences.animated;
 
-      // 1. Natural Breathing Motion (Gentle expansion of lavender sweater & torso)
-      if (animated && bodyMesh) {
-        const breathSpeed = currentState === 'listening' ? 1.4 : currentState === 'thinking' ? 2.1 : 1.7;
-        const breathAmp = currentState === 'thinking' ? 0.018 : 0.013;
-        const breathScaleY = 1 + Math.sin(time * breathSpeed) * breathAmp;
-        const breathScaleX = 1 + Math.cos(time * breathSpeed * 0.5) * (breathAmp * 0.4);
-
-        bodyMesh.scale.set(breathScaleX, breathScaleY, 1);
-
-        // Gentle posture sway
-        const swayAngle = Math.sin(time * 0.5) * 0.010;
-        bodyMesh.rotation.z = swayAngle;
-
-        shadowMesh.scale.set(1 + Math.abs(swayAngle) * 3, 1 + Math.sin(time * breathSpeed) * 0.04, 1);
+      // 1. Stable Character Stance: Anchored, steady, dignified (no unwanted sway or drift)
+      if (bodyMesh) {
+        bodyMesh.position.set(0, 0, 0);
+        bodyMesh.rotation.set(0, 0, 0);
+        bodyMesh.scale.set(1, 1, 1);
+        shadowMesh.scale.set(1, 1, 1);
       }
 
-      // 2. Head Rotation & Posture based on Emotional State & Pointer tracking
-      if (animated && headPivot) {
-        let statePitch = 0;
-        let stateYaw = 0;
-        let stateRoll = 0;
-
-        switch (currentState) {
-          case 'listening':
-            statePitch = -0.035;
-            stateRoll = 0.03;
-            stateYaw = mouseX * 0.07;
-            break;
-          case 'thinking':
-            statePitch = 0.055;
-            stateYaw = 0.07 + Math.sin(time * 0.7) * 0.025;
-            stateRoll = -0.02;
-            break;
-          case 'speaking':
-            statePitch = Math.sin(time * 6.0) * 0.03 - 0.015;
-            stateYaw = Math.cos(time * 2.8) * 0.02;
-            stateRoll = Math.sin(time * 1.8) * 0.012;
-            break;
-          case 'greeting':
-          case 'happy':
-            statePitch = Math.sin(time * 3.5) * 0.038 - 0.015;
-            stateRoll = 0.02;
-            stateYaw = mouseX * 0.04;
-            break;
-          case 'idle':
-          default:
-            statePitch = Math.sin(time * 0.8) * 0.015;
-            stateYaw = Math.cos(time * 0.6) * 0.018 + mouseX * 0.05;
-            stateRoll = Math.sin(time * 0.4) * 0.008;
-            break;
-        }
-
-        targetHeadRotX = statePitch;
-        targetHeadRotY = stateYaw;
-        targetHeadRotZ = stateRoll;
-
-        // Smooth spring interpolation
-        currentHeadRotX += (targetHeadRotX - currentHeadRotX) * 0.08;
-        currentHeadRotY += (targetHeadRotY - currentHeadRotY) * 0.08;
-        currentHeadRotZ += (targetHeadRotZ - currentHeadRotZ) * 0.08;
-
-        headPivot.rotation.x = currentHeadRotX;
-        headPivot.rotation.y = currentHeadRotY;
-        headPivot.rotation.z = currentHeadRotZ;
+      // 2. Stable Head Alignment: Centered and looking forward (no pointer-induced skewing)
+      if (headPivot) {
+        headPivot.position.set(0, 1.15, 0.015);
+        headPivot.rotation.set(0, 0, 0);
       }
 
       // 3. Eye Blinking System (Natural intervals 3.2s - 4.8s)

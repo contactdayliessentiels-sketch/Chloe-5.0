@@ -62,8 +62,10 @@ function RealisticChloeModel({
       });
     });
     tex.colorSpace = THREE.SRGBColorSpace;
+    tex.generateMipmaps = true;
     tex.minFilter = THREE.LinearMipmapLinearFilter;
     tex.magFilter = THREE.LinearFilter;
+    tex.anisotropy = 8;
     return tex;
   }, []);
 
@@ -204,65 +206,17 @@ function RealisticChloeModel({
   useFrame(({ clock, pointer }, delta) => {
     const t = clock.getElapsedTime();
 
-    // 1. Natural Breathing: sinusoidal vertical and depth expansion of lavender sweater
+    // 1. Stable Character Stance: Anchored, steady, dignified (no unwanted sway or drift)
     if (bodyMeshRef.current) {
-      const breathSpeed = state === 'listening' ? 1.4 : state === 'thinking' ? 2.1 : 1.7;
-      const breathAmp = state === 'thinking' ? 0.018 : 0.013;
-      const breathScaleY = 1 + Math.sin(t * breathSpeed) * breathAmp;
-      const breathScaleX = 1 + Math.cos(t * breathSpeed * 0.5) * (breathAmp * 0.4);
-
-      bodyMeshRef.current.scale.set(breathScaleX, breathScaleY, 1);
-
-      // Gentle posture weight-shift sway
-      const swayAngle = Math.sin(t * 0.5) * 0.010;
-      bodyMeshRef.current.rotation.z = swayAngle;
+      bodyMeshRef.current.position.set(0, 0, 0);
+      bodyMeshRef.current.rotation.set(0, 0, 0);
+      bodyMeshRef.current.scale.set(1, 1, 1);
     }
 
-    // 2. Head Rotation & Posture based on Emotional State & Pointer
+    // 2. Stable Head Alignment: Centered and looking forward (no pointer-induced skewing)
     if (headPivotRef.current) {
-      let statePitch = 0;
-      let stateYaw = 0;
-      let stateRoll = 0;
-
-      switch (state) {
-        case 'listening':
-          statePitch = -0.035;
-          stateRoll = 0.03;
-          stateYaw = pointer.x * 0.07;
-          break;
-        case 'thinking':
-          statePitch = 0.055;
-          stateYaw = 0.07 + Math.sin(t * 0.7) * 0.025;
-          stateRoll = -0.02;
-          break;
-        case 'speaking':
-          statePitch = Math.sin(t * 6.0) * 0.03 - 0.015;
-          stateYaw = Math.cos(t * 2.8) * 0.02;
-          stateRoll = Math.sin(t * 1.8) * 0.012;
-          break;
-        case 'greeting':
-        case 'happy':
-          statePitch = Math.sin(t * 3.5) * 0.038 - 0.015;
-          stateRoll = 0.02;
-          stateYaw = pointer.x * 0.04;
-          break;
-        case 'idle':
-        default:
-          statePitch = Math.sin(t * 0.8) * 0.015;
-          stateYaw = Math.cos(t * 0.6) * 0.018 + pointer.x * 0.05;
-          stateRoll = Math.sin(t * 0.4) * 0.008;
-          break;
-      }
-
-      // Smooth damping interpolation
-      const cur = currentHeadRotRef.current;
-      cur.x += (statePitch - cur.x) * 0.08;
-      cur.y += (stateYaw - cur.y) * 0.08;
-      cur.z += (stateRoll - cur.z) * 0.08;
-
-      headPivotRef.current.rotation.x = cur.x;
-      headPivotRef.current.rotation.y = cur.y;
-      headPivotRef.current.rotation.z = cur.z;
+      headPivotRef.current.position.set(0, 1.15, 0.015);
+      headPivotRef.current.rotation.set(0, 0, 0);
     }
 
     // 3. Eye Blinking System (Natural interval ~ every 3.2s - 4.8s)
@@ -304,9 +258,10 @@ function RealisticChloeModel({
         <meshStandardMaterial
           map={texture}
           transparent={true}
-          roughness={0.55}
-          metalness={0.08}
+          roughness={0.50}
+          metalness={0.05}
           alphaTest={0.05}
+          side={THREE.DoubleSide}
         />
       </mesh>
 
@@ -451,16 +406,11 @@ function AvatarScene({
         far={2.2}
       />
 
-      {/* Camera Controls with Safe Humanoid Constraints */}
+      {/* Camera Controls - Locked for Stable Humanoid Stance (No awkward rotation or paper-cutout angle) */}
       <OrbitControls
-        enableZoom={true}
+        enableZoom={false}
+        enableRotate={false}
         enablePan={false}
-        minDistance={2.5}
-        maxDistance={5.2}
-        minPolarAngle={Math.PI / 3}
-        maxPolarAngle={Math.PI / 1.85}
-        minAzimuthAngle={-Math.PI / 3.5}
-        maxAzimuthAngle={Math.PI / 3.5}
         target={[0, 0.02, 0]}
       />
     </>
@@ -514,20 +464,20 @@ export const ChloeAvatar: React.FC<ChloeAvatarProps> = ({
   return (
     <div className={`relative flex flex-col items-center justify-center w-full h-full select-none ${className}`}>
       {/* 3D R3F Canvas Container */}
-      <div className="relative w-full h-full min-h-[380px] overflow-hidden rounded-3xl bg-radial from-[#15102a]/70 via-[#0a0817]/90 to-[#04020a]">
+      <div className="relative w-full h-full min-h-0 overflow-hidden rounded-3xl bg-radial from-[#15102a]/70 via-[#0a0817]/90 to-[#04020a]">
         {/* Ambient Pulsing Aura in background */}
         <div className="absolute inset-x-12 top-10 bottom-20 rounded-full bg-purple-600/15 blur-3xl pointer-events-none" />
 
-        {/* Real-time WebGL Canvas - Calibrated to 36° FOV and 3.82m distance for +12% apparent size without clipping */}
+        {/* Real-time WebGL Canvas - Calibrated to 42° FOV and 4.35m distance for complete head-to-toe framing */}
         <Canvas
           shadows
-          camera={{ position: [0, 0.02, 3.82], fov: 36 }}
+          camera={{ position: [0, -0.02, 4.35], fov: 42 }}
           gl={{
             antialias: true,
             alpha: true,
             powerPreference: 'high-performance',
             toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.1,
+            toneMappingExposure: 1.12,
           }}
           className="w-full h-full cursor-grab active:cursor-grabbing"
           onClick={onTap}

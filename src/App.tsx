@@ -42,6 +42,7 @@ import { AgentsView } from './components/AgentsView.tsx';
 import { TestsAdminView } from './components/TestsAdminView.tsx';
 import { ApprovalModal } from './components/ApprovalModal.tsx';
 import { AvatarView } from './components/AvatarView.tsx';
+import { FloatingAvatar } from './components/FloatingAvatar.tsx';
 import { AvatarProvider } from './context/AvatarContext.tsx';
 
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
@@ -724,6 +725,14 @@ export default function App() {
           onCancel={() => handleResolveApproval(selectedApproval.id, false)}
         />
       )}
+
+      {/* Persistent Floating Draggable Avatar across all routes */}
+      <FloatingAvatar
+        onOpenChat={() => setActiveTab('chat')}
+        onOpenAvatarStudio={() => setActiveTab('avatar')}
+        currentTab={activeTab}
+        assistantName={settings.assistantName}
+      />
       </div>
     </AvatarProvider>
   );
