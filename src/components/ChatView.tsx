@@ -430,13 +430,23 @@ export const ChatView: React.FC<ChatViewProps> = ({
     utterance.rate = settings.voiceSpeed || 1.0;
     utterance.pitch = settings.voicePitch || 1.05;
 
-    // Pick female voice if available
+    // Apply voice expressivity to dynamic lip-sync engine
+    if (settings.voiceExpressivity !== undefined) {
+      speechLipSync.setExpressivity(settings.voiceExpressivity);
+    }
+
+    // Pick selected voice or fallback to language preference
     const voices = window.speechSynthesis.getVoices();
-    const frenchVoice =
-      voices.find(v => v.lang.startsWith('fr') && /female|femme|amelie|julie|hortense|celia/i.test(v.name)) ||
-      voices.find(v => v.lang.startsWith('fr'));
-    if (frenchVoice) {
-      utterance.voice = frenchVoice;
+    if (settings.voiceUri && voices.length > 0) {
+      const match = voices.find(v => v.voiceURI === settings.voiceUri);
+      if (match) utterance.voice = match;
+    } else {
+      const frenchVoice =
+        voices.find(v => v.lang.startsWith('fr') && /female|femme|amelie|julie|hortense|celia/i.test(v.name)) ||
+        voices.find(v => v.lang.startsWith('fr'));
+      if (frenchVoice) {
+        utterance.voice = frenchVoice;
+      }
     }
 
     // Connect real-time lip-sync to the utterance

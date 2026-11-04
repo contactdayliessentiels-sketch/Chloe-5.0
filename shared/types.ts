@@ -349,6 +349,9 @@ export interface UserSettings {
   voiceGender: 'female' | 'male';
   voiceSpeed: number;
   voicePitch: number;
+  voiceUri?: string;
+  voiceExpressivity?: number;
+  voicePauseDuration?: number;
   model: string;
   theme: 'dark' | 'light';
   ecoMode: boolean;

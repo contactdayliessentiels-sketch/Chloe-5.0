@@ -19,6 +19,7 @@ type VisemeListener = (state: VisemeState) => void;
 
 class SpeechLipSyncManager {
   private listeners: Set<VisemeListener> = new Set();
+  private expressivity: number = 0.85; // 0 to 1
   private currentState: VisemeState = {
     viseme: 'rest',
     openAmount: 0,
@@ -30,6 +31,10 @@ class SpeechLipSyncManager {
   private animTimer: number | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private lastBoundaryTime: number = 0;
+
+  public setExpressivity(value: number) {
+    this.expressivity = Math.max(0.1, Math.min(1.5, value));
+  }
 
   public subscribe(listener: VisemeListener): () => void {
     this.listeners.add(listener);
@@ -184,13 +189,14 @@ class SpeechLipSyncManager {
           break;
       }
 
+      const expr = this.expressivity;
       this.currentState = {
         viseme: currentViseme,
-        openAmount: Math.max(0, Math.min(1, open)),
+        openAmount: Math.max(0, Math.min(1, open * expr)),
         widthSpread: Math.max(0, Math.min(1, spread)),
-        jawDrop: Math.max(0, Math.min(1, open * 0.85)),
+        jawDrop: Math.max(0, Math.min(1, open * 0.85 * expr)),
         isSpeaking: true,
-        amplitude: 0.5 + Math.sin(step * 0.7) * 0.4,
+        amplitude: Math.min(1, (0.5 + Math.sin(step * 0.7) * 0.4) * expr),
       };
       this.notify();
     }, 75); // ~13Hz mouth flap updates for organic speech rhythm

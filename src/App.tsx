@@ -4,6 +4,7 @@
  */
 
 import './lib/api-base.ts';
+import { onProviderRotation, RotationEvent } from './lib/api-base.ts';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Conversation,
@@ -93,6 +94,19 @@ export default function App() {
   const [tests, setTests] = useState<TestResult[]>([]);
   const [mcpServers, setMcpServers] = useState<MCPServerConfig[]>([]);
   const [selectedApproval, setSelectedApproval] = useState<PendingApproval | null>(null);
+  const [rotationNotification, setRotationNotification] = useState<RotationEvent | null>(null);
+
+  // Subscribe to API Orchestrator 429 Failover Rotations
+  useEffect(() => {
+    const unsub = onProviderRotation(evt => {
+      setRotationNotification(evt);
+      const timer = setTimeout(() => {
+        setRotationNotification(prev => (prev?.timestamp === evt.timestamp ? null : prev));
+      }, 7000);
+      return () => clearTimeout(timer);
+    });
+    return unsub;
+  }, []);
 
   // Initial Data Fetch
   const loadInitialData = useCallback(async () => {

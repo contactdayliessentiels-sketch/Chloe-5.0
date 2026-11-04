@@ -31,6 +31,7 @@ import {
 
 import { useAvatarState } from '../hooks/useAvatarState.ts';
 import { AvatarSize, AvatarPosition, AvatarVisibility, AvatarLayoutMode } from '../types/avatar.ts';
+import { VoiceSettings } from './VoiceSettings.tsx';
 
 const PROVIDER_FALLBACKS: AIProviderConfig[] = [
   { id: 'gemini', name: 'Google Gemini', endpoint: 'Google GenAI Cloud', description: 'Modèle multimodal Google.', keyUrl: 'https://aistudio.google.com/app/apikey', hasKey: false, maskedKey: '', status: 'not_configured', models: ['gemini-3.8-flash', 'gemini-4-argon', 'gemini-3.1-flash-lite'], selectedModel: 'gemini-3.8-flash' },
@@ -577,45 +578,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         </div>
 
-        {/* Voix et Synthèse */}
-        <div className="p-4 rounded-2xl bg-[#0f1428] border border-slate-800/80 space-y-3">
-          <h3 className="font-semibold text-white text-sm flex items-center gap-2">
-            <Volume2 className="w-4 h-4 text-purple-400" />
-            Synthèse vocale & Audio
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-slate-400 font-medium mb-1">
-                Vitesse d'élocution : {form.voiceSpeed}x
-              </label>
-              <input
-                type="range"
-                min="0.75"
-                max="1.5"
-                step="0.05"
-                value={form.voiceSpeed}
-                onChange={e => setForm({ ...form, voiceSpeed: parseFloat(e.target.value) })}
-                className="w-full accent-purple-600 cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <label className="block text-slate-400 font-medium mb-1">
-                Tonalité de la voix : {form.voicePitch}
-              </label>
-              <input
-                type="range"
-                min="0.8"
-                max="1.4"
-                step="0.05"
-                value={form.voicePitch}
-                onChange={e => setForm({ ...form, voicePitch: parseFloat(e.target.value) })}
-                className="w-full accent-purple-600 cursor-pointer"
-              />
-            </div>
-          </div>
-        </div>
+        {/* Voix et Synthèse Vocale */}
+        <VoiceSettings settings={settings} onUpdateSettings={onUpdateSettings} />
 
         {/* Moteur IA & Limites */}
         <div className="p-4 rounded-2xl bg-[#0f1428] border border-slate-800/80 space-y-3">
